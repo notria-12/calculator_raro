@@ -34,8 +34,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
   List values = [0, 0];
   var current = 0;
 
+  clearMemory() {
+    displayValue = '0';
+    clearDisplay = false;
+    operation = null;
+    values = [0, 0];
+    current = 0;
+    setState(() {});
+  }
+
   setOperation(operation) {
+    print(values);
+
     if (current == 0) {
+      print('current 0');
       current = 1;
       clearDisplay = true;
       this.operation = operation;
@@ -46,6 +58,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
       var result;
 
+      print('OP:${this.operation}');
       switch (this.operation) {
         case '+':
           result = values[0] + values[1];
@@ -69,19 +82,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
       current = equals ? 0 : 1;
       clearDisplay = !equals;
       this.operation = equals ? null : operation;
-      displayValue = values[0];
+      this.displayValue = values[0];
 
       setState(() {});
     }
   }
 
   addDigit(n) {
-    if (n == '.' && displayValue.contains('.')) return;
+    print(n);
+    if (n == '.' && this.displayValue.contains('.')) return;
 
-    var display = displayValue == '0' || clearDisplay;
-    var currentValue = display ? '' : displayValue;
-    displayValue = currentValue + n;
-
+    var display = this.displayValue == '0' || clearDisplay;
+    var currentValue = display ? '' : this.displayValue;
+    var displayValue = currentValue + n;
+    this.displayValue = displayValue;
+    clearDisplay = false;
+    print(displayValue);
     setState(() {});
 
     if (n != '.') {
@@ -130,7 +146,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                   itemCount: 18,
                   itemBuilder: (BuildContext context, int index) =>
                       GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      final numeric = RegExp(r'^[0-9]');
+
+                      if (numeric.hasMatch(options[index])) {
+                        addDigit(options[index]);
+                      } else if (options[index] == 'AC') {
+                        clearMemory();
+                      } else {
+                        setOperation(options[index]);
+                      }
+                    },
                     child: Container(
                         color:
                             index == 15 ? Color(0xFFF57C00) : Color(0xFF212121),
