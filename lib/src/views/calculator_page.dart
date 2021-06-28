@@ -83,7 +83,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       current = equals ? 0 : 1;
       clearDisplay = !equals;
       this.operation = equals ? null : operation;
-      this.displayValue = values[0];
+      this.displayValue = values[0].toString();
       this.values = values;
 
       setState(() {});
