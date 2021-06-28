@@ -44,6 +44,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   setOperation(operation) {
+    var values = [...this.values];
     print(values);
 
     if (current == 0) {
@@ -83,6 +84,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       clearDisplay = !equals;
       this.operation = equals ? null : operation;
       this.displayValue = values[0];
+      this.values = values;
 
       setState(() {});
     }
@@ -103,7 +105,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
     if (n != '.') {
       var i = current;
       var newValue = double.parse(displayValue);
+      var values = [...this.values];
       values[i] = newValue;
+      this.values = values;
       setState(() {});
     }
   }
