@@ -28,11 +28,69 @@ class _CalculatorPageState extends State<CalculatorPage> {
     "."
   ];
 
-  var operation = "";
-  var result = 0.0;
-  var a;
-  var b;
-  var currentOp;
+  var displayValue = '0';
+  bool clearDisplay = false;
+  var operation;
+  List values = [0, 0];
+  var current = 0;
+
+  setOperation(operation) {
+    if (current == 0) {
+      current = 1;
+      clearDisplay = true;
+      this.operation = operation;
+
+      setState(() {});
+    } else {
+      var equals = operation == '=';
+
+      var result;
+
+      switch (this.operation) {
+        case '+':
+          result = values[0] + values[1];
+          break;
+        case '-':
+          result = values[0] - values[1];
+          break;
+        case '/':
+          result = values[0] / values[1];
+          break;
+        case '*':
+          result = values[0] * values[1];
+          break;
+        default:
+          break;
+      }
+
+      values[0] = result;
+      values[1] = 0;
+
+      current = equals ? 0 : 1;
+      clearDisplay = !equals;
+      this.operation = equals ? null : operation;
+      displayValue = values[0];
+
+      setState(() {});
+    }
+  }
+
+  addDigit(n) {
+    if (n == '.' && displayValue.contains('.')) return;
+
+    var display = displayValue == '0' || clearDisplay;
+    var currentValue = display ? '' : displayValue;
+    displayValue = currentValue + n;
+
+    setState(() {});
+
+    if (n != '.') {
+      var i = current;
+      var newValue = double.parse(displayValue);
+      values[i] = newValue;
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +104,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
             Expanded(
               flex: 2,
               child: Container(
+                // color: Colors.white,
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
                     padding:
                         const EdgeInsets.only(right: 24, bottom: 36, left: 24),
                     child: Text(
-                      operation,
+                      displayValue,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 50,
@@ -71,126 +130,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                   itemCount: 18,
                   itemBuilder: (BuildContext context, int index) =>
                       GestureDetector(
-                    onTap: () {
-                      final op = options[index];
-                      operation += options[index];
-
-                      if (a != null && b != null && currentOp != null) {
-                        if (currentOp == "+") {
-                          result = a + b;
-                        } else if (currentOp == "-") {
-                          result = a - b;
-                        } else if (currentOp == "/") {
-                          result = a / b;
-                        } else if (currentOp == "%") {
-                          result = a % b;
-                        } else if (currentOp == "*") {
-                          result = a * b;
-                        }
-                        a = result;
-                        b = null;
-                      }
-
-                      switch (op) {
-                        case "AC":
-                          {
-                            a = null;
-                            b = null;
-                            result = 0.0;
-                            operation = "";
-                            break;
-                          }
-                        case "+":
-                          {
-                            currentOp = op;
-                            break;
-                          }
-                        case "-":
-                          {
-                            currentOp = op;
-                            break;
-                          }
-                        case "*":
-                          {
-                            currentOp = op;
-                            break;
-                          }
-                        case "/":
-                          {
-                            currentOp = op;
-                            break;
-                          }
-                        case "=":
-                          {
-                            operation = result.toString();
-                            break;
-                          }
-                        default:
-                          {
-                            if (a == null) {
-                              a = double.parse(op);
-                            } else {
-                              b = double.parse(op);
-                            }
-                          }
-                      }
-                      // final op = options[index];
-
-                      // if (op == "=") {
-                      //   final items = operation.split("");
-                      //   var number = 0.0;
-                      //   //0 1 2 3 4
-                      //   //1 + 2 + 4 - Size(5)
-                      //   //3+4 - Size(3)
-                      //   //7 - Size(1)
-                      //   for (var i = 0; i + 1 < items.length / 3; i++) {
-                      //     final a = i % 2 == 0 ? (i + 1) : (i + 2);
-                      //     switch (items[a]) {
-                      //       case '%':
-                      //         {
-                      //           number += double.parse(items[i]) %
-                      //               double.parse(items[i + 2]);
-                      //         }
-                      //         break;
-                      //       case '÷':
-                      //         {
-                      //           number += double.parse(items[i]) /
-                      //               double.parse(items[i + 2]);
-                      //         }
-                      //         break;
-                      //       case '*':
-                      //         {
-                      //           number += double.parse(items[i]) *
-                      //               double.parse(items[i + 2]);
-                      //         }
-                      //         break;
-                      //       case '+':
-                      //         {
-                      //           number += double.parse(items[i]) +
-                      //               double.parse(items[i + 2]);
-                      //         }
-                      //         break;
-                      //       case '-':
-                      //         {
-                      //           number += double.parse(items[i]) -
-                      //               double.parse(items[i + 2]);
-                      //         }
-                      //         break;
-                      //       default:
-                      //         {
-                      //           number += 0.0;
-                      //         }
-                      //     }
-                      //   }
-                      //   operation = number.toString();
-                      // } else if (op == "AC") {
-                      //   operation = "";
-                      // } else {
-                      //   operation += options[index];
-                      // }
-
-                      setState(() {});
-                    },
+                    onTap: () {},
                     child: Container(
                         color:
                             index == 15 ? Color(0xFFF57C00) : Color(0xFF212121),
