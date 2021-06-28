@@ -73,6 +73,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
         case '*':
           result = values[0] * values[1];
           break;
+
         default:
           break;
       }
